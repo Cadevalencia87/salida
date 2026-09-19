@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Asunto pendiente</title>
+<meta name="description" content="Un pequeño trámite antes de salir.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Fondo con textura sutil, puramente decorativo -->
+  <div class="fondo-textura" aria-hidden="true"></div>
+
+  <main class="escenario">
+    <div class="tarjeta" id="tarjeta">
+
+      <!-- La barra de progreso vive fuera del contenido que se anima,
+           para que no parpadee al cambiar de paso -->
+      <div class="progreso" id="progreso" hidden>
+        <div class="progreso-pista">
+          <div class="progreso-relleno" id="progresoRelleno"></div>
+        </div>
+        <p class="progreso-texto" id="progresoTexto"></p>
+      </div>
+
+      <!-- Aquí se inyecta cada paso dinámicamente -->
+      <div class="contenido" id="contenido"></div>
+
+    </div>
+
+    <!-- Aviso pequeño que aparece si alguien se tarda mucho en un paso -->
+    <p class="aviso-paciencia" id="avisoPaciencia" aria-live="polite"></p>
+  </main>
+
+  <!-- Confirmación de acciones, para quienes usan lector de pantalla -->
+  <div class="visualmente-oculto" role="status" aria-live="polite" id="anuncioAccesible"></div>
+
+  <!-- Botón discreto para reiniciar todo el trámite -->
+  <button type="button" class="boton-reiniciar" id="botonReiniciar" title="Reiniciar todo">
+    ↺
+  </button>
+
+  <script src="script.js"></script>
+</body>
+</html>
