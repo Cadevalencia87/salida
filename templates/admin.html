@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Panel — Asunto pendiente</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --negro:#120D0C;--negro-suave:#1C1513;--tarjeta:#221916;--borde:rgba(255,255,255,0.08);
+  --rojo:#E2483B;--rojo-brasa:#9C2A21;--dorado:#E7B34F;--crema:#F5ECE0;--crema-suave:#C9BCAF;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--negro);color:var(--crema);font-family:"Plus Jakarta Sans",system-ui,sans-serif;padding:32px 18px 60px}
+.wrap{max-width:920px;margin:0 auto}
+h1{font-family:"Fraunces",serif;font-size:26px;margin:0 0 4px;font-weight:600}
+p.sub{color:var(--crema-suave);margin:0 0 26px;font-size:14px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:30px}
+.card{background:var(--tarjeta);border:1px solid var(--borde);border-top:3px solid var(--rojo);border-radius:14px;padding:16px 18px}
+.card .num{font-family:"Fraunces",serif;font-size:28px;font-weight:600}
+.card .lbl{font-size:12.5px;color:var(--crema-suave);margin-top:4px}
+.desglose{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:30px}
+.panel{background:var(--tarjeta);border:1px solid var(--borde);border-radius:14px;padding:16px 18px}
+.panel h2{font-size:14px;margin:0 0 10px;color:var(--crema-suave);font-weight:600}
+.panel .fila{display:flex;justify-content:space-between;font-size:14px;padding:5px 0;border-top:1px solid rgba(255,255,255,0.05)}
+.panel .fila:first-of-type{border-top:0}
+table{width:100%;border-collapse:collapse;background:var(--tarjeta);font-size:13px;border-radius:14px;overflow:hidden}
+th,td{border-bottom:1px solid var(--borde);padding:9px 12px;text-align:left;vertical-align:top}
+th{background:rgba(255,255,255,0.04);font-weight:600;color:var(--crema-suave);white-space:nowrap}
+.tablewrap{overflow-x:auto;border:1px solid var(--borde);border-radius:14px}
+.si{color:#7FBF8F}
+.no{color:var(--rojo)}
+.empty{color:var(--crema-suave);padding:24px;text-align:center;background:var(--tarjeta);border:1px solid var(--borde);border-radius:14px}
+@media (max-width:620px){.desglose{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Asunto pendiente — panel</h1>
+  <p class="sub">Respuestas registradas por Less, en orden de llegada.</p>
+
+  <div class="cards">
+    <div class="card"><div class="num">{{ stats.total }}</div><div class="lbl">Registros totales</div></div>
+    <div class="card"><div class="num">{{ stats.confirmadas }}</div><div class="lbl">Confirmaciones (sí)</div></div>
+  </div>
+
+  {% if stats.total > 0 %}
+  <div class="desglose">
+    <div class="panel">
+      <h2>Disponibilidad elegida</h2>
+      {% for valor, cuenta in stats.disponibilidad %}
+      <div class="fila"><span>{{ valor }}</span><span>{{ cuenta }}</span></div>
+      {% endfor %}
+    </div>
+    <div class="panel">
+      <h2>Organización elegida</h2>
+      {% for valor, cuenta in stats.organizacion %}
+      <div class="fila"><span>{{ valor }}</span><span>{{ cuenta }}</span></div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% if filas|length == 0 %}
+  <div class="empty">Todavía no hay respuestas registradas.</div>
+  {% else %}
+  <div class="tablewrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Registrado</th><th>Confirmó</th><th>Fecha elegida</th>
+          <th>Disponibilidad</th><th>Organización</th><th>Quiere evitar</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for f in filas %}
+        <tr>
+          <td>{{ f.fecha_hora_registro }}</td>
+          <td class="{{ 'si' if f.confirmacion == 'si' else 'no' }}">{{ 'Sí' if f.confirmacion == 'si' else 'No' }}</td>
+          <td>{{ f.fecha_elegida or '—' }}</td>
+          <td>{{ f.disponibilidad or '—' }}</td>
+          <td>{{ f.organizacion or '—' }}</td>
+          <td>{{ f.restricciones or '—' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+</div>
+</body>
+</html>

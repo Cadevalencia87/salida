@@ -1,0 +1,539 @@
+/* ============================================================
+   ASUNTO PENDIENTE — hoja de estilos
+   Paleta: negro cálido + rojo brasa + acento dorado.
+   Tipografía: Fraunces (voz, personalidad) + Plus Jakarta Sans (uso).
+   ============================================================ */
+
+:root {
+  /* Color */
+  --negro:        #120D0C;
+  --negro-suave:  #1C1513;
+  --tarjeta:      #221916;
+  --tarjeta-borde: rgba(255, 255, 255, 0.07);
+  --rojo:         #E2483B;
+  --rojo-brasa:   #9C2A21;
+  --dorado:       #E7B34F;
+  --crema:        #F5ECE0;
+  --crema-suave:  #C9BCAF;
+  --sombra:       rgba(0, 0, 0, 0.45);
+
+  /* Tipografía */
+  --fuente-voz: "Fraunces", Georgia, serif;
+  --fuente-uso: "Plus Jakarta Sans", system-ui, sans-serif;
+
+  /* Ritmo */
+  --radio: 22px;
+  --radio-chico: 14px;
+  --duracion: 420ms;
+  --curva: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---------- Reinicio básico ---------- */
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  background: var(--negro);
+  color: var(--crema);
+  font-family: var(--fuente-uso);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+h1, h2, h3 {
+  font-family: var(--fuente-voz);
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.2;
+}
+
+p { margin: 0; }
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* Respeta a quien pide menos movimiento */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ---------- Fondo ---------- */
+.fondo-textura {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 900px 600px at 15% -10%, rgba(226, 72, 59, 0.16), transparent 60%),
+    radial-gradient(ellipse 700px 500px at 110% 110%, rgba(231, 179, 79, 0.10), transparent 55%),
+    var(--negro);
+}
+
+/* ---------- Escenario ---------- */
+.escenario {
+  position: relative;
+  z-index: 1;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 28px 18px 56px;
+  gap: 14px;
+}
+
+/* ---------- Tarjeta principal ---------- */
+.tarjeta {
+  width: 100%;
+  max-width: 440px;
+  background: linear-gradient(175deg, var(--tarjeta), #1A1210);
+  border: 1px solid var(--tarjeta-borde);
+  border-radius: var(--radio);
+  padding: 38px 30px 32px;
+  box-shadow: 0 24px 60px -20px var(--sombra), 0 0 0 1px rgba(0,0,0,0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Un filo cálido arriba de la tarjeta, como el sello de un trámite */
+.tarjeta::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--rojo-brasa), var(--rojo), var(--dorado));
+}
+
+/* ---------- Barra de progreso ---------- */
+.progreso {
+  margin-bottom: 26px;
+}
+
+.progreso-pista {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.progreso-relleno {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--rojo-brasa), var(--rojo));
+  border-radius: inherit;
+  transition: width 600ms var(--curva);
+}
+
+.progreso-texto {
+  margin-top: 9px;
+  font-size: 12.5px;
+  color: var(--crema-suave);
+}
+
+/* ---------- Contenido animado por paso ---------- */
+.contenido {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.contenido.entrando {
+  animation: entrarPaso var(--duracion) var(--curva) both;
+}
+
+.contenido.saliendo {
+  animation: salirPaso 200ms ease-in both;
+}
+
+@keyframes entrarPaso {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes salirPaso {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-10px); }
+}
+
+/* ---------- Bloques tipográficos de cada paso ---------- */
+.eyebrow-paso {
+  font-size: 13px;
+  color: var(--rojo);
+  font-weight: 600;
+}
+
+.titulo-paso {
+  font-size: 25px;
+  letter-spacing: -0.01em;
+}
+
+.subtitulo-paso {
+  font-size: 15.5px;
+  color: var(--crema-suave);
+  line-height: 1.55;
+}
+
+.nota-paso {
+  font-size: 13px;
+  color: var(--crema-suave);
+  opacity: 0.85;
+  font-style: italic;
+}
+
+/* ---------- Botones ---------- */
+.fila-botones {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.boton {
+  border: none;
+  border-radius: var(--radio-chico);
+  padding: 15px 22px;
+  font-size: 15.5px;
+  font-weight: 600;
+  transition: transform 160ms var(--curva), box-shadow 160ms var(--curva), background 160ms;
+  min-height: 50px;
+}
+
+.boton:focus-visible {
+  outline: 2px solid var(--dorado);
+  outline-offset: 3px;
+}
+
+.boton-primario {
+  background: linear-gradient(175deg, var(--rojo), var(--rojo-brasa));
+  color: var(--crema);
+  flex: 1 1 auto;
+  box-shadow: 0 10px 24px -10px rgba(226, 72, 59, 0.55);
+}
+
+.boton-primario:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px -10px rgba(226, 72, 59, 0.65);
+}
+
+.boton-primario:active {
+  transform: translateY(0);
+}
+
+.boton-secundario {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--crema);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.boton-secundario:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* El botón travieso de "No" — su posición se ajusta desde JS */
+.boton-esquivo {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--crema-suave);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: transform 220ms var(--curva), background 160ms;
+}
+
+.boton-esquivo:hover {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+/* ---------- Opciones tipo tarjeta (disponibilidad, organización) ---------- */
+.lista-opciones {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.opcion {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: var(--radio-chico);
+  padding: 15px 16px;
+  color: var(--crema);
+  font-size: 15px;
+  font-weight: 500;
+  transition: border-color 160ms, background 160ms, transform 160ms var(--curva);
+}
+
+.opcion:hover {
+  background: rgba(226, 72, 59, 0.08);
+  border-color: rgba(226, 72, 59, 0.35);
+  transform: translateY(-1px);
+}
+
+.opcion:focus-visible {
+  outline: 2px solid var(--dorado);
+  outline-offset: 2px;
+}
+
+.opcion.seleccionada {
+  background: rgba(226, 72, 59, 0.14);
+  border-color: var(--rojo);
+}
+
+/* ---------- Input de fecha, restilizado ---------- */
+.envoltorio-fecha {
+  position: relative;
+}
+
+.input-fecha {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radio-chico);
+  padding: 15px 16px;
+  color: var(--crema);
+  font-family: var(--fuente-uso);
+  font-size: 16px;
+  font-weight: 500;
+  color-scheme: dark;
+}
+
+.input-fecha:focus-visible {
+  outline: 2px solid var(--dorado);
+  outline-offset: 2px;
+  border-color: var(--rojo);
+}
+
+label.etiqueta-campo {
+  display: block;
+  font-size: 13px;
+  color: var(--crema-suave);
+  margin-bottom: 8px;
+}
+
+/* ---------- Campo de texto opcional ---------- */
+.textarea-campo {
+  width: 100%;
+  min-height: 90px;
+  resize: vertical;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radio-chico);
+  padding: 14px 16px;
+  color: var(--crema);
+  font-family: var(--fuente-uso);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.textarea-campo:focus-visible {
+  outline: 2px solid var(--dorado);
+  outline-offset: 2px;
+  border-color: var(--rojo);
+}
+
+.textarea-campo::placeholder {
+  color: rgba(245, 236, 224, 0.35);
+}
+
+/* ---------- Navegación entre pasos ---------- */
+.nav-pasos {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.enlace-atras {
+  background: none;
+  border: none;
+  color: var(--crema-suave);
+  font-size: 14px;
+  padding: 8px 4px;
+}
+
+.enlace-atras:hover {
+  color: var(--crema);
+}
+
+.enlace-atras:focus-visible {
+  outline: 2px solid var(--dorado);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ---------- Toast de "respuesta registrada" ---------- */
+.toast-registro {
+  position: fixed;
+  left: 50%;
+  bottom: 26px;
+  transform: translate(-50%, 12px);
+  background: var(--negro-suave);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--crema-suave);
+  font-size: 13px;
+  padding: 11px 18px;
+  border-radius: 999px;
+  box-shadow: 0 12px 30px -12px var(--sombra);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 260ms var(--curva), transform 260ms var(--curva);
+  z-index: 20;
+  white-space: nowrap;
+  max-width: 90vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.toast-registro.visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* ---------- Aviso de paciencia ---------- */
+.aviso-paciencia {
+  min-height: 18px;
+  font-size: 12.5px;
+  color: var(--crema-suave);
+  opacity: 0;
+  transition: opacity 400ms var(--curva);
+  text-align: center;
+  max-width: 320px;
+}
+
+.aviso-paciencia.visible {
+  opacity: 0.75;
+}
+
+/* ---------- Celebración al elegir "Sí" ---------- */
+.celebracion {
+  position: relative;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+.chispa {
+  position: absolute;
+  font-size: 20px;
+  animation: subirChispa 900ms var(--curva) forwards;
+  opacity: 0;
+}
+
+@keyframes subirChispa {
+  0%   { opacity: 0; transform: translateY(6px) scale(0.6) rotate(0deg); }
+  25%  { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-52px) scale(1) rotate(20deg); }
+}
+
+/* ---------- Resumen final ---------- */
+.resumen {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radio-chico);
+  padding: 16px 18px;
+}
+
+.resumen-fila {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  font-size: 14px;
+}
+
+.resumen-etiqueta {
+  color: var(--crema-suave);
+}
+
+.resumen-valor {
+  color: var(--crema);
+  font-weight: 600;
+  text-align: right;
+}
+
+/* ---------- Botón de reinicio, discreto ---------- */
+.boton-reiniciar {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--crema-suave);
+  font-size: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.55;
+  transition: opacity 160ms, transform 300ms var(--curva);
+  z-index: 15;
+}
+
+.boton-reiniciar:hover {
+  opacity: 1;
+}
+
+.boton-reiniciar:focus-visible {
+  outline: 2px solid var(--dorado);
+  outline-offset: 2px;
+  opacity: 1;
+}
+
+.boton-reiniciar.girando {
+  transform: rotate(-360deg);
+}
+
+/* ---------- Accesibilidad: oculto visualmente pero leíble ---------- */
+.visualmente-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+/* ---------- Pantalla final ---------- */
+.marca-final {
+  font-size: 34px;
+  text-align: center;
+}
+
+.icono-final {
+  font-size: 40px;
+  text-align: center;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 400px) {
+  .tarjeta {
+    padding: 30px 22px 26px;
+  }
+
+  .titulo-paso {
+    font-size: 22px;
+  }
+
+  .fila-botones {
+    flex-direction: column;
+  }
+
+  .boton {
+    width: 100%;
+  }
+}

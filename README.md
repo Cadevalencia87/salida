@@ -1,152 +1,114 @@
-# Asunto pendiente
+# Asunto pendiente — con panel de administración
 
-Página estática (HTML + CSS + JS, sin backend) para que Less confirme el
-día y disponibilidad de una salida, con tono divertido y sin revelar
-el plan.
+Versión con backend: la página se ve y se siente exactamente igual
+que la estática, pero ahora cada vez que Less confirma, la respuesta
+se guarda en una base de datos que tú consultas desde un panel
+privado (`/admin`) con usuario y contraseña.
 
 ## Archivos
 
 ```
-/index.html   → estructura de la página
-/style.css    → todo el diseño visual
-/script.js    → la lógica: pasos, animaciones, botón "No" travieso
-/README.md    → este archivo
+app.py                    → servidor Flask: sirve la página, guarda respuestas, panel /admin
+requirements.txt          → dependencias
+templates/index.html      → la página que ve Less (mismo diseño de siempre)
+templates/admin.html      → el panel donde tú ves sus respuestas
+static/style.css          → todo el diseño visual (sin cambios)
+static/script.js          → la lógica de pasos + el envío al backend
+salida.db                 → se crea sola al arrancar (no se sube a git)
 ```
 
-No hay build ni dependencias que instalar. Es HTML/CSS/JS plano.
-
-## Probarlo en tu computadora
-
-No necesitas nada especial. Dos opciones:
-
-1. **La más simple**: doble clic en `index.html` y se abre en tu navegador.
-2. Si prefieres verlo como si ya estuviera en internet (recomendado,
-   porque algunos detalles de fuentes cargan mejor así): instala la
-   extensión "Live Server" en VS Code, clic derecho sobre `index.html`
-   → "Open with Live Server".
-
-## a) Crear un repositorio en GitHub
-
-1. Entra a [github.com](https://github.com) y da clic en **"New repository"**.
-2. Ponle un nombre (puede ser privado si prefieres que nadie más lo vea
-   antes de tiempo, por ejemplo `asunto-pendiente`).
-3. Déjalo vacío, sin README ni .gitignore automáticos (para no chocar
-   con los archivos que ya tienes).
-4. Da clic en **"Create repository"**.
-
-## b) Subir los archivos
-
-**Sin usar terminal (más fácil):**
-
-1. En la página de tu repo recién creado, clic en **"uploading an
-   existing file"** (o "Add file" → "Upload files").
-2. Arrastra los 4 archivos (`index.html`, `style.css`, `script.js`,
-   `README.md`).
-3. Escribe un mensaje como "primera versión" y clic en **"Commit
-   changes"**.
-
-**Con git en terminal:**
+## 1. Correrlo en tu PC
 
 ```bash
-cd asunto-pendiente
-git init
-git add .
-git commit -m "primera versión"
-git branch -M main
-git remote add origin https://github.com/TU-USUARIO/TU-REPO.git
-git push -u origin main
+cd salida-less-app
+python3 -m venv venv
+source venv/bin/activate          # en Windows: venv\Scripts\activate
+pip install -r requirements.txt
+python3 app.py
 ```
 
-## c) Desplegar en Render como Static Site
+Abre `http://127.0.0.1:5000` — ahí ves la página tal cual la vería
+Less. El panel está en `http://127.0.0.1:5000/admin` (usuario y
+contraseña por defecto: `admin` / `cambia-esta-clave`, cámbialos
+antes de desplegar — ver paso 3).
 
-1. Entra a [render.com](https://render.com) y crea una cuenta gratis
-   (puedes entrar directo con GitHub).
-2. Clic en **"New +"** → **"Static Site"** (no "Web Service" — esta
-   página no necesita servidor).
-3. Conecta tu repositorio `asunto-pendiente`.
+## 2. Subir a GitHub
 
-## d) Configuración exacta en Render
+1. Crea un repositorio nuevo en [github.com](https://github.com)
+   (puede ser privado).
+2. En la página del repo: **"Add file" → "Upload files"**, arrastra
+   todo el contenido de esta carpeta (`app.py`, `requirements.txt`,
+   `README.md`, y las carpetas `templates` y `static` completas).
+3. Escribe un mensaje como "primera versión" y **"Commit changes"**.
 
-| Campo | Valor |
-|---|---|
-| **Name** | el que quieras, ej. `asunto-pendiente` (define tu URL) |
-| **Branch** | `main` |
-| **Root Directory** | vacío (los archivos están en la raíz del repo) |
-| **Build Command** | vacío — no hace falta, no hay nada que compilar |
-| **Publish Directory** | `.` (un punto, significa "esta misma carpeta") |
+## 3. Desplegar en Render
 
-Clic en **"Create Static Site"**. En 1-2 minutos te da un link tipo
-`https://asunto-pendiente.onrender.com` — ese es el que le mandas.
+Esta vez el servicio debe ser **"Web Service"**, no "Static Site" —
+porque ahora hay un backend corriendo.
 
-A diferencia de un "Web Service", un Static Site en el plan gratis de
-Render **no se duerme** por inactividad — carga rápido siempre.
+1. Entra a [render.com](https://render.com), **"New +" → "Web
+   Service"**, conecta tu repositorio.
+2. Configura:
 
-## e) Cómo modificar los textos después
+   | Campo | Valor |
+   |---|---|
+   | **Build Command** | `pip install -r requirements.txt` |
+   | **Start Command** | `gunicorn app:app` |
+   | **Instance Type** | `Free` |
 
-Todo el texto que ella ve está en `script.js`, dentro de funciones que
-empiezan con `dibujar` (por ejemplo `dibujarIntro()`, `dibujarFecha()`).
-Busca el texto entre comillas o backticks y cámbialo directamente.
+3. Antes de crear el servicio, baja a **"Environment Variables"** y
+   agrega:
 
-Ejemplos rápidos:
+   | Key | Value |
+   |---|---|
+   | `ADMIN_USER` | el usuario que tú quieras |
+   | `ADMIN_PASS` | una contraseña que solo tú sepas |
 
-- Frase de la pantalla inicial → dentro de `dibujarIntro()`, la línea
-  con `"Ok, tenemos un asunto importante..."`.
-- Mensajes del botón "No" → arriba del archivo, en la lista
-  `MENSAJES_NO`.
-- Opciones y respuestas de disponibilidad → en la lista
-  `DISPONIBILIDAD`.
-- Opciones y respuestas sobre organización → en la lista
-  `ORGANIZACION`.
+4. **"Create Web Service"**. En unos minutos te da un link tipo
+   `https://asunto-pendiente.onrender.com` — ese se lo mandas a Less.
 
-Después de editar, vuelve a subir el archivo a GitHub (mismo proceso
-del paso b) y Render actualiza la página sola en 1-2 minutos.
+**Nota sobre el plan gratis:** el servicio "duerme" tras ~15 minutos
+sin uso; la primera visita después de eso tarda ~20-30 segundos en
+despertar — no es un error, es normal.
 
-## Conectar el envío de respuestas (opcional)
+**Sobre la base de datos:** en el plan gratis, `salida.db` puede
+resetearse si Render reinicia el contenedor (nuevo despliegue, o
+tras dormir mucho tiempo). Para una sola confirmación de una amiga,
+normalmente no es problema porque el servicio no se reinicia solo
+mientras está despierto — pero si quieres que quede 100% a prueba de
+todo, se puede agregar un disco persistente gratuito de Render,
+dímelo y lo dejamos configurado.
 
-Ahora mismo las respuestas se recopilan solo en la página, y ella ve
-el resumen, pero a ti no te llegan a ningún lado. Si quieres que te
-lleguen por correo automáticamente, sin programar un backend:
+## 4. Ver las respuestas
 
-1. Entra a [web3forms.com](https://web3forms.com) (gratis, sin
-   backend) y crea un "Access Key" con tu correo.
-2. Abre `script.js` y busca estas tres líneas, casi al principio del
-   archivo:
+Entra a `https://tu-link.onrender.com/admin`, mete el usuario y
+contraseña que configuraste, y verás:
 
-   ```js
-   const ENVIO_ACTIVADO = false;
-   const ENVIO_ENDPOINT = "";
-   const ENVIO_LLAVE_PUBLICA = "";
-   ```
+- Total de confirmaciones recibidas.
+- Cuántas fueron "sí" (por diseño solo llegan las que sí confirmó,
+  ya que un "no" real la regresa al inicio sin enviar nada).
+- Un desglose de cuántas veces se eligió cada opción de
+  disponibilidad y de organización.
+- La tabla completa: fecha de registro, la fecha que ella eligió
+  para salir, su disponibilidad, si dijo que ya tenía una idea o
+  prefería sorprenderse, y lo que puso en "qué evitar".
 
-3. Cámbialas por:
+## 5. Cómo modificar los textos después
 
-   ```js
-   const ENVIO_ACTIVADO = true;
-   const ENVIO_ENDPOINT = "https://api.web3forms.com/submit";
-   const ENVIO_LLAVE_PUBLICA = "tu-access-key-aquí";
-   ```
+Igual que antes: todo el texto que ella ve vive en
+`static/script.js`, en las funciones que empiezan con `dibujar`.
+Cambias el texto entre comillas, subes el archivo a GitHub, y Render
+actualiza solo.
 
-4. Sube el archivo actualizado a GitHub.
+## Seguridad
 
-Esa "access key" de Web3Forms es pública por diseño — está hecha para
-vivir en el código del navegador, no expone tu cuenta ni tu correo.
-No es una contraseña ni una llave privada, así que es seguro subirla
-al repositorio tal cual.
-
-Si prefieres Formspree o EmailJS en vez de Web3Forms, la idea es la
-misma: la función `enviarRespuestas()` al final de `script.js` es el
-único lugar que necesitas ajustar — cambia la URL y el formato del
-cuerpo del mensaje según la documentación del servicio que elijas.
-
-## Notas de diseño
-
-- Paleta oscura cálida (negro-café, rojo brasa, acento dorado),
-  pensada para sentirse como algo hecho a la medida, no como una
-  plantilla.
-- El botón "No" siempre tiene una salida real: tras varios intentos
-  graciosos, el siguiente clic se respeta como una respuesta
-  genuina — nunca la deja atrapada sin poder decir que no.
-- Funciona con teclado (tab + enter) y respeta la preferencia de
-  "reducir movimiento" del sistema operativo si está activada.
-- El botón ↺ discreto, abajo a la derecha, reinicia todo el trámite
-  por si se quieren probar las respuestas de nuevo antes de mandarlo.
+- `/admin` exige usuario y contraseña (autenticación básica); sin
+  eso, nadie ve las respuestas.
+- El endpoint que recibe las respuestas valida que venga una
+  confirmación válida y recorta cada campo a un límite razonable de
+  caracteres, para evitar abusos.
+- Las consultas a la base de datos usan parámetros (nunca se arma
+  SQL a mano con lo que ella escribe), así que no hay riesgo de
+  inyección SQL.
+- Cambia `ADMIN_PASS` por algo que no sea el valor de ejemplo antes
+  de desplegar.
